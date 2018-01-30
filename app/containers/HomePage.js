@@ -3,10 +3,17 @@ import { Layout, Menu, Icon } from 'antd'
 import styles from '../assets/css/homePage.css'
 
 const { Header, Sider, Content } = Layout
+const SubMenu = Menu.SubMenu
+
+import Posts from './Posts'
+import Drafts from './Drafts'
+import BaseSetting from './BaseSetting'
+import QiniuSetting from './QiniuSetting'
 
 export default class HomePage extends Component {
     state = {
-        collapsed: false
+        collapsed: false,
+        key: 'posts'
     }
 
     toggle = () => {
@@ -14,6 +21,27 @@ export default class HomePage extends Component {
             collapsed: !this.state.collapsed
         })
     }
+    changeMenu = ({ key }) => {
+        this.setState({
+            key: key
+        })
+    }
+
+    renderContent() {
+        switch (this.state.key) {
+            case 'posts':
+                return <Posts />
+            case 'drafts':
+                return <Drafts />
+            case 'base':
+                return <BaseSetting />
+            case 'qiniu':
+                return <QiniuSetting />
+            default:
+                return <Posts />
+        }
+    }
+
     render() {
         return (
             <Layout style={{ height: '100vh' }}>
@@ -22,24 +50,56 @@ export default class HomePage extends Component {
                     collapsible
                     collapsed={this.state.collapsed}
                 >
-                    <div className={styles.logo} />
+                    <div className={styles.logo}>
+                        <img
+                            className={styles.logoImg}
+                            src={require('../assets/images/logo.svg')}
+                            alt=""
+                        />
+                    </div>
                     <Menu
                         theme="dark"
                         mode="inline"
-                        defaultSelectedKeys={['1']}
+                        defaultOpenKeys={['article']}
+                        defaultSelectedKeys={[this.state.key]}
+                        onClick={this.changeMenu}
                     >
-                        <Menu.Item key="1">
-                            <Icon type="user" />
-                            <span>nav 1</span>
-                        </Menu.Item>
-                        <Menu.Item key="2">
-                            <Icon type="video-camera" />
-                            <span>nav 2</span>
-                        </Menu.Item>
-                        <Menu.Item key="3">
-                            <Icon type="upload" />
-                            <span>nav 3</span>
-                        </Menu.Item>
+                        <SubMenu
+                            key="article"
+                            title={
+                                <span>
+                                    <Icon type="dashboard" />
+                                    <span>文章管理</span>
+                                </span>
+                            }
+                        >
+                            <Menu.Item key="posts">
+                                <Icon type="file-text" />
+                                <span>已发布</span>
+                            </Menu.Item>
+                            <Menu.Item key="drafts">
+                                <Icon type="file" />
+                                <span>草稿</span>
+                            </Menu.Item>
+                        </SubMenu>
+                        <SubMenu
+                            key="setting"
+                            title={
+                                <span>
+                                    <Icon type="setting" />
+                                    <span>设置</span>
+                                </span>
+                            }
+                        >
+                            <Menu.Item key="base">
+                                <Icon type="profile" />
+                                <span>基础设置</span>
+                            </Menu.Item>
+                            <Menu.Item key="qiniu">
+                                <Icon type="cloud" />
+                                <span>七牛云</span>
+                            </Menu.Item>
+                        </SubMenu>
                     </Menu>
                 </Sider>
                 <Layout>
@@ -62,7 +122,7 @@ export default class HomePage extends Component {
                             minHeight: 280
                         }}
                     >
-                        Content
+                        {this.renderContent()}
                     </Content>
                 </Layout>
             </Layout>

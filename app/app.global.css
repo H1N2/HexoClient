@@ -39,3 +39,7 @@ a:hover {
     text-decoration: none;
     cursor: pointer;
 }
+
+.ant-layout-content {
+    height: calc(100% - 112px);
+}
