@@ -22,6 +22,7 @@
     outline: none;
     padding: 10px;
     font-size: 14px;
+    resize: none;
 }
 .editorPreview {
     flex: 1;
