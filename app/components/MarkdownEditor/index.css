@@ -1,0 +1,32 @@
+.container {
+    flex: 1;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+}
+.toolbar {
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #eee;
+    padding: 0 10px;
+}
+.icon {
+    color: #333;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+.editor {
+    flex: 1;
+    border: 0;
+    outline: none;
+    padding: 10px;
+    font-size: 14px;
+}
+.editorPreview {
+    flex: 1;
+    border: 0;
+    outline: none;
+    padding: 10px;
+    font-size: 14px;
+}
