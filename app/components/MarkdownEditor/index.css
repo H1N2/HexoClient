@@ -3,6 +3,7 @@
     border: 1px solid #eee;
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 }
 .toolbar {
     height: 40px;
@@ -25,9 +26,10 @@
     resize: none;
 }
 .editorPreview {
-    flex: 1;
+    flex: auto;
     border: 0;
     outline: none;
     padding: 10px;
     font-size: 14px;
+    overflow: auto;
 }

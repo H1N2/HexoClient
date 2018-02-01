@@ -12,14 +12,15 @@ import {
     Button
 } from 'antd'
 const FormItem = Form.Item
+const Search = Input.Search
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 }
+        sm: { span: 5 }
     },
     wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 }
+        sm: { span: 14 }
     }
 }
 const tailFormItemLayout = {
@@ -30,18 +31,28 @@ const tailFormItemLayout = {
         },
         sm: {
             span: 20,
-            offset: 4
+            offset: 5
         }
     }
 }
 export default class BaseSetting extends Component {
-    handleSubmit = () => {}
+    handleSubmit = e => {
+        e.preventDefault()
+        console.log('confirm')
+    }
+    chooseFolder = () => {
+        console.log('choose folder')
+    }
     render() {
         return (
             <div>
                 <Form onSubmit={this.handleSubmit}>
                     <FormItem {...formItemLayout} label="项目目录设置">
-                        <Input />
+                        <Search
+                            disabled
+                            enterButton={<Icon type="folder" />}
+                            onSearch={this.chooseFolder}
+                        />
                     </FormItem>
                     <FormItem {...formItemLayout} label="七牛云AccessKey">
                         <Input />
@@ -54,7 +65,7 @@ export default class BaseSetting extends Component {
                     </FormItem>
                     <FormItem {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
-                            确定
+                            保存
                         </Button>
                     </FormItem>
                 </Form>

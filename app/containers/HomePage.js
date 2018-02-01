@@ -8,7 +8,6 @@ const SubMenu = Menu.SubMenu
 import Posts from './Posts'
 import Drafts from './Drafts'
 import BaseSetting from './BaseSetting'
-import QiniuSetting from './QiniuSetting'
 
 export default class HomePage extends Component {
     state = {
@@ -35,8 +34,6 @@ export default class HomePage extends Component {
                 return <Drafts />
             case 'base':
                 return <BaseSetting />
-            case 'qiniu':
-                return <QiniuSetting />
             default:
                 return <Posts />
         }
@@ -53,7 +50,7 @@ export default class HomePage extends Component {
                     <div className={styles.logo}>
                         <img
                             className={styles.logoImg}
-                            src={require('../assets/images/logo.svg')}
+                            src={require('../assets/images/logo.png')}
                             alt=""
                         />
                     </div>
@@ -94,10 +91,6 @@ export default class HomePage extends Component {
                             <Menu.Item key="base">
                                 <Icon type="profile" />
                                 <span>基础设置</span>
-                            </Menu.Item>
-                            <Menu.Item key="qiniu">
-                                <Icon type="cloud" />
-                                <span>七牛云</span>
                             </Menu.Item>
                         </SubMenu>
                     </Menu>

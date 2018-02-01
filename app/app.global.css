@@ -14,13 +14,8 @@ body {
 }
 
 p {
-    font-size: 24px;
+    font-size: 18px;
 }
-
-li {
-    list-style: none;
-}
-
 a {
     color: white;
     opacity: 0.75;
@@ -38,7 +33,7 @@ a:hover {
 }
 ::-webkit-scrollbar {
     width: 6px;
-    height: 10px;
+    height: 6px;
 }
 ::-webkit-scrollbar-track {
     background-color: #fff;

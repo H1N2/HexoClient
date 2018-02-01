@@ -1,21 +1,48 @@
 import React, { Component } from 'react'
-import { Input } from 'antd'
+import { Input, Icon, Button, Tooltip, Table } from 'antd'
 import styles from './index.css'
 
 export default class ArticleList extends Component {
     render() {
+        const columns = [
+            {
+                title: '文章标题',
+                dataIndex: 'filename',
+                key: 'filename',
+                width: '40%'
+            },
+            {
+                title: '最后修改时间',
+                dataIndex: 'date',
+                key: 'date',
+                width: '30%'
+            },
+            {
+                title: '操作',
+                key: 'options',
+                width: '30%',
+                render: (text, record) => (
+                    <span>
+                        <Button type="primary">编辑</Button>
+                        {this.props.type === 'drafts' ? (
+                            <Button style={{ marginLeft: '10px' }}>发布</Button>
+                        ) : null}
+                        <Button type="dashed" style={{ marginLeft: '10px' }}>
+                            删除
+                        </Button>
+                    </span>
+                )
+            }
+        ]
         return (
-            <div className={styles.container}>
-                <Input
-                    style={{ width: 'calc(100% - 20px)', marginBottom: '10px' }}
-                    placeholder="输入文件名查询"
-                />
+            <div
+                ref={el => {
+                    this.container = el
+                }}
+                className={styles.container}
+            >
                 <div className={styles.articleList}>
-                    {new Array(100).fill(true).map((item, index) => (
-                        <div key={index} className={styles.article}>
-                            文件啊啊啊文件啊啊啊
-                        </div>
-                    ))}
+                    <Table dataSource={this.props.data} columns={columns} />
                 </div>
             </div>
         )

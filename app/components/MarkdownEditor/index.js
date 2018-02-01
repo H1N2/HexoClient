@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import marked from 'marked'
 import styles from './index.css'
+import './github-markdown.global.css'
 import { Icon, Tooltip } from 'antd'
 
 export default class MarkdownEditor extends Component {
@@ -58,7 +59,7 @@ export default class MarkdownEditor extends Component {
                 {this.state.previewing ? (
                     <div
                         dangerouslySetInnerHTML={{ __html: this.state.html }}
-                        className={styles.editorPreview}
+                        className={styles.editorPreview + ' markdown-body'}
                     />
                 ) : (
                     <textarea
