@@ -11,6 +11,11 @@ import {
     Checkbox,
     Button
 } from 'antd'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { use } from '../service'
+import { setBaseSetting } from '../actions'
+
 const FormItem = Form.Item
 const Search = Input.Search
 const formItemLayout = {
@@ -35,13 +40,31 @@ const tailFormItemLayout = {
         }
     }
 }
-export default class BaseSetting extends Component {
+
+class BaseSetting extends Component {
+    state = {
+        baseDir: this.props.baseDir,
+        ak: this.props.ak,
+        sk: this.props.sk,
+        bucket: this.props.bucket
+    }
+
     handleSubmit = e => {
+        // TODO 进行相关的检测
         e.preventDefault()
-        console.log('confirm')
+        this.props.setBaseSetting({
+            baseDir: this.state.baseDir,
+            ak: this.state.ak,
+            sk: this.state.sk,
+            bucket: this.state.bucket
+        })
     }
     chooseFolder = () => {
-        console.log('choose folder')
+        use('setdir', path => {
+            this.setState({
+                baseDir: path
+            })
+        })
     }
     render() {
         return (
@@ -50,18 +73,34 @@ export default class BaseSetting extends Component {
                     <FormItem {...formItemLayout} label="项目目录设置">
                         <Search
                             disabled
+                            value={this.state.baseDir}
                             enterButton={<Icon type="folder" />}
                             onSearch={this.chooseFolder}
                         />
                     </FormItem>
                     <FormItem {...formItemLayout} label="七牛云AccessKey">
-                        <Input />
+                        <Input
+                            value={this.state.ak}
+                            onChange={e =>
+                                this.setState({ ak: e.target.value })
+                            }
+                        />
                     </FormItem>
                     <FormItem {...formItemLayout} label="七牛云SecretKey">
-                        <Input />
+                        <Input
+                            value={this.state.sk}
+                            onChange={e =>
+                                this.setState({ sk: e.target.value })
+                            }
+                        />
                     </FormItem>
                     <FormItem {...formItemLayout} label="七牛云Bucket">
-                        <Input />
+                        <Input
+                            value={this.state.bucket}
+                            onChange={e =>
+                                this.setState({ bucket: e.target.value })
+                            }
+                        />
                     </FormItem>
                     <FormItem {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
@@ -73,3 +112,13 @@ export default class BaseSetting extends Component {
         )
     }
 }
+const mapStateToProps = state => ({
+    baseDir: state.system.baseDir,
+    ak: state.system.ak,
+    sk: state.system.sk,
+    bucket: state.system.bucket
+})
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({ setBaseSetting }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(BaseSetting)

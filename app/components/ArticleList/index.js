@@ -23,11 +23,20 @@ export default class ArticleList extends Component {
                 width: '30%',
                 render: (text, record) => (
                     <span>
-                        <Button type="primary">编辑</Button>
+                        <Button
+                            type="primary"
+                            onClick={() => this.props.onEdit(record)}
+                        >
+                            编辑
+                        </Button>
                         {this.props.type === 'drafts' ? (
                             <Button style={{ marginLeft: '10px' }}>发布</Button>
                         ) : null}
-                        <Button type="dashed" style={{ marginLeft: '10px' }}>
+                        <Button
+                            type="dashed"
+                            style={{ marginLeft: '10px' }}
+                            onClick={() => this.props.onDelete(record)}
+                        >
                             删除
                         </Button>
                     </span>

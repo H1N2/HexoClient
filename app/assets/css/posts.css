@@ -20,3 +20,6 @@
     flex: auto;
     display: flex;
 }
+.editorBox {
+    height: 480px;
+}

@@ -1,16 +1,31 @@
 import React, { Component } from 'react'
 import styles from '../assets/css/posts.css'
-import { Button, Modal, Input, Tooltip } from 'antd'
+import { Button, Modal, Input, Tooltip, Tabs } from 'antd'
 import ArticleList from '../components/ArticleList'
 import MarkdownEditor from '../components/MarkdownEditor'
 import nanoid from 'nanoid'
+const confirm = Modal.confirm
+
+function showDeleteConfirm() {
+    confirm({
+        title: '提示',
+        content: '删除后将无法恢复，确定要删除吗？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk() {
+            console.log('OK')
+        }
+    })
+}
 
 export default class Posts extends Component {
     state = {
         content: '# 这是已发布的',
         activeIndex: 0,
         visible: false,
+        editorVisible: false,
         filename: '',
+        dialogTitle: '',
         articles: new Array(10).fill(true).map(() => ({
             key: nanoid(),
             filename: '这是一个测试的新建的文章',
@@ -38,9 +53,28 @@ export default class Posts extends Component {
         // TODO 调用主进程方法 hexo new post this.state.filename
         console.log(this.state.filename)
     }
+
+    handleEditorOk() {
+        // TODO 讲内容写入对应的文件中
+    }
+
     handleSearch = keywords => {
         console.log(keywords)
     }
+
+    handleEdit = data => {
+        this.current = data
+        this.setState({
+            dialogTitle: data.filename,
+            editorVisible: true
+        })
+    }
+
+    handleDelete = data => {
+        this.current = data
+        showDeleteConfirm()
+    }
+
     render() {
         return (
             <div className={styles.container}>
@@ -74,17 +108,9 @@ export default class Posts extends Component {
                     onClick={this.handleArticleClick}
                     onAddClick={this.handleAddClick}
                     onSearch={this.handleSearch}
+                    onEdit={this.handleEdit}
+                    onDelete={this.handleDelete}
                 />
-                <div className={styles.right}>
-                    {/*
-                    <div className={styles.markdownContainer}>
-                        <MarkdownEditor
-                            content={this.state.content}
-                            change={this.onChange}
-                        />
-                    </div>
-                    */}
-                </div>
                 <Modal
                     title="新建文章"
                     okText="确定"
@@ -104,6 +130,26 @@ export default class Posts extends Component {
                             this.setState({ filename: e.target.value })
                         }}
                     />
+                </Modal>
+                <Modal
+                    width="80%"
+                    title={this.state.dialogTitle}
+                    okText="确定"
+                    cancelText="取消"
+                    visible={this.state.editorVisible}
+                    onOk={this.handleEditorOk}
+                    onCancel={() => {
+                        this.setState({
+                            editorVisible: false
+                        })
+                    }}
+                >
+                    <div className={styles.editorBox}>
+                        <MarkdownEditor
+                            content={this.state.content}
+                            change={this.onChange}
+                        />
+                    </div>
                 </Modal>
             </div>
         )

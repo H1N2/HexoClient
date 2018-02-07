@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import MenuBuilder from './menu'
+import './controller'
 
 let mainWindow = null
 
