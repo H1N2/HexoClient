@@ -6,16 +6,10 @@ export default class ArticleList extends Component {
     render() {
         const columns = [
             {
-                title: '文章标题',
+                title: '文件名',
                 dataIndex: 'filename',
                 key: 'filename',
                 width: '40%'
-            },
-            {
-                title: '最后修改时间',
-                dataIndex: 'date',
-                key: 'date',
-                width: '30%'
             },
             {
                 title: '操作',

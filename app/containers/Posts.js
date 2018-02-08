@@ -3,8 +3,10 @@ import styles from '../assets/css/posts.css'
 import { Button, Modal, Input, Tooltip, Tabs } from 'antd'
 import ArticleList from '../components/ArticleList'
 import MarkdownEditor from '../components/MarkdownEditor'
-import nanoid from 'nanoid'
+
 const confirm = Modal.confirm
+import { connect } from 'react-redux'
+import { use } from '../service'
 
 function showDeleteConfirm() {
     confirm({
@@ -18,20 +20,26 @@ function showDeleteConfirm() {
     })
 }
 
-export default class Posts extends Component {
+class Posts extends Component {
     state = {
-        content: '# 这是已发布的',
+        content: '',
         activeIndex: 0,
         visible: false,
         editorVisible: false,
         filename: '',
         dialogTitle: '',
-        articles: new Array(10).fill(true).map(() => ({
-            key: nanoid(),
-            filename: '这是一个测试的新建的文章',
-            date: '2018-02-01 14:00:00'
-        }))
+        articles: []
     }
+
+    componentDidMount() {
+        let path = this.props.baseDir + '/source/_posts'
+        use('getFileList', path, files => {
+            this.setState({
+                articles: files
+            })
+        })
+    }
+
     onChange = e => {
         this.setState({
             content: e.target.value
@@ -39,7 +47,6 @@ export default class Posts extends Component {
     }
     handleArticleClick = index => {
         // TODO 加载对应的文件 设置为content
-        console.log(index)
         this.setState({
             activeIndex: index
         })
@@ -63,11 +70,18 @@ export default class Posts extends Component {
     }
 
     handleEdit = data => {
-        this.current = data
-        this.setState({
-            dialogTitle: data.filename,
-            editorVisible: true
-        })
+        use(
+            'getFileDetail',
+            `${this.props.baseDir}/source/_posts/${data.filename}.md`,
+            content => {
+                this.current = data
+                this.setState({
+                    dialogTitle: data.filename,
+                    editorVisible: true,
+                    content
+                })
+            }
+        )
     }
 
     handleDelete = data => {
@@ -138,6 +152,7 @@ export default class Posts extends Component {
                     cancelText="取消"
                     visible={this.state.editorVisible}
                     onOk={this.handleEditorOk}
+                    style={{ top: 30 }}
                     onCancel={() => {
                         this.setState({
                             editorVisible: false
@@ -155,3 +170,8 @@ export default class Posts extends Component {
         )
     }
 }
+const mapStateToProps = state => ({
+    baseDir: state.system.baseDir
+})
+
+export default connect(mapStateToProps)(Posts)
