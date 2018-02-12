@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import { dialog } from 'electron'
 import nanoid from 'nanoid'
+import { exec } from 'child_process'
 
 // 选择根目录
 reg('setdir', () => {
@@ -10,7 +11,11 @@ reg('setdir', () => {
         defaultPath: __dirname,
         properties: ['openDirectory']
     })
-    return path[0]
+    if (path && Array.isArray(path)) {
+        return path[0]
+    } else {
+        return ''
+    }
 })
 
 // 获取指定文件内容
@@ -31,4 +36,34 @@ reg('getFileList', dirname => {
 })
 
 // 写文件
-reg('setFileContent', (filename, content) => {})
+reg('setFileContent', (filename, content) => {
+    if (!fs.existsSync(filename)) {
+        return {
+            code: -1,
+            msg: '文件不存在'
+        }
+    }
+    fs.writeFileSync(filename, content)
+    return {
+        code: 0,
+        msg: '保存成功'
+    }
+})
+
+// 删除文件
+reg('deleteFile', filename => {
+    fs.unlinkSync(filename)
+})
+
+// 新建文件
+reg('createFile', (filename, type) => {
+    if (fs.existsSync(filename)) {
+        return {
+            code: -1,
+            msg: '文件已存在'
+        }
+    }
+    // TODO child_process.exec(`hexo new ${type}`)  type: post/draft
+})
+
+function execCmd() {}

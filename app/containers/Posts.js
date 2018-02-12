@@ -1,24 +1,12 @@
 import React, { Component } from 'react'
 import styles from '../assets/css/posts.css'
-import { Button, Modal, Input, Tooltip, Tabs } from 'antd'
+import { Button, Modal, Input, Tooltip, Tabs, message } from 'antd'
 import ArticleList from '../components/ArticleList'
 import MarkdownEditor from '../components/MarkdownEditor'
 
 const confirm = Modal.confirm
 import { connect } from 'react-redux'
 import { use } from '../service'
-
-function showDeleteConfirm() {
-    confirm({
-        title: '提示',
-        content: '删除后将无法恢复，确定要删除吗？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk() {
-            console.log('OK')
-        }
-    })
-}
 
 class Posts extends Component {
     state = {
@@ -34,9 +22,33 @@ class Posts extends Component {
     componentDidMount() {
         let path = this.props.baseDir + '/source/_posts'
         use('getFileList', path, files => {
+            this.files = files
             this.setState({
                 articles: files
             })
+        })
+    }
+
+    showDeleteConfirm = () => {
+        confirm({
+            title: '提示',
+            content: '删除后将无法恢复，确定要删除吗？',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+                let filename = `${this.props.baseDir}/source/_posts/${
+                    this.current.filename
+                }.md`
+                use('deleteFile', filename, res => {
+                    message.success('删除成功')
+                    this.files = this.files.filter(item => {
+                        return item.filename !== this.current.filename
+                    })
+                    this.setState({
+                        articles: this.files
+                    })
+                })
+            }
         })
     }
 
@@ -66,7 +78,12 @@ class Posts extends Component {
     }
 
     handleSearch = keywords => {
-        console.log(keywords)
+        let data = this.files.filter(item => {
+            return item.filename.indexOf(keywords) !== -1
+        })
+        this.setState({
+            articles: data
+        })
     }
 
     handleEdit = data => {
@@ -86,7 +103,7 @@ class Posts extends Component {
 
     handleDelete = data => {
         this.current = data
-        showDeleteConfirm()
+        this.showDeleteConfirm()
     }
 
     render() {

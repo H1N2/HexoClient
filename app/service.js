@@ -14,7 +14,7 @@ exports.use = function(type, data, cb) {
         data = null
     }
     ipcRenderer.send(type, data)
-    ipcRenderer.on(`${type}__success`, function(event, arg) {
+    ipcRenderer.once(`${type}__success`, function(event, arg) {
         cb && cb(arg)
     })
 }
