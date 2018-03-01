@@ -36,7 +36,7 @@ reg('getFileList', dirname => {
 })
 
 // 写文件
-reg('setFileContent', (filename, content) => {
+reg('setFileContent', ({ filename, content }) => {
     if (!fs.existsSync(filename)) {
         return {
             code: -1,
@@ -56,14 +56,34 @@ reg('deleteFile', filename => {
 })
 
 // 新建文件
-reg('createFile', (filename, type) => {
-    if (fs.existsSync(filename)) {
+reg('createFile', ({ filename, dir, type }) => {
+    let path = `${dir}/source/_${type}s/${filename}.md`
+    if (fs.existsSync(path)) {
         return {
             code: -1,
             msg: '文件已存在'
         }
     }
     // TODO child_process.exec(`hexo new ${type}`)  type: post/draft
+    return execCmd(`hexo new ${type}`, dir)
 })
 
-function execCmd() {}
+// 使用child_process来执行相关命令
+function execCmd(command, cwd) {
+    return new Promise((resolve, reject) => {
+        exec(command, { cwd }, (error, stdout, stderr) => {
+            console.log(error)
+            if (error) {
+                resolve({
+                    code: -1,
+                    msg: error
+                })
+                return
+            }
+            resolve({
+                code: 0,
+                msg: stdout
+            })
+        })
+    })
+}

@@ -1,9 +1,12 @@
 const { ipcRenderer, ipcMain } = require('electron')
 
 exports.reg = function(type, cb) {
-    ipcMain.on(type, function(event, arg) {
+    ipcMain.on(type, async (event, arg) => {
         if (!cb) return
         let res = cb(arg)
+        if (typeof res === 'promise') {
+            res = await res
+        }
         event.sender.send(`${type}__success`, res)
     })
 }

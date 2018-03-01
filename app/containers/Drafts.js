@@ -1,22 +1,57 @@
 import React, { Component } from 'react'
 import styles from '../assets/css/posts.css'
-import { Button, Modal, Input, Tooltip } from 'antd'
+import { Button, Modal, Input, Tooltip, Tabs, message } from 'antd'
 import ArticleList from '../components/ArticleList'
 import MarkdownEditor from '../components/MarkdownEditor'
-import nanoid from 'nanoid'
 
-export default class Drafts extends Component {
+const confirm = Modal.confirm
+import { connect } from 'react-redux'
+import { use } from '../service'
+
+class Drafts extends Component {
     state = {
-        content: '# 这是草稿',
+        content: '',
         activeIndex: 0,
         visible: false,
+        editorVisible: false,
         filename: '',
-        articles: new Array(10).fill(true).map(() => ({
-            key: nanoid(),
-            filename: '这是一个测试的草稿的文章',
-            date: '2018-02-01 14:00:00'
-        }))
+        dialogTitle: '',
+        articles: []
     }
+
+    componentDidMount() {
+        let path = this.props.baseDir + '/source/_drafts'
+        use('getFileList', path, files => {
+            this.files = files
+            this.setState({
+                articles: files
+            })
+        })
+    }
+
+    showDeleteConfirm = () => {
+        confirm({
+            title: '提示',
+            content: '删除后将无法恢复，确定要删除吗？',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+                let filename = `${this.props.baseDir}/source/_drafts/${
+                    this.current.filename
+                }.md`
+                use('deleteFile', filename, res => {
+                    message.success('删除成功')
+                    this.files = this.files.filter(item => {
+                        return item.filename !== this.current.filename
+                    })
+                    this.setState({
+                        articles: this.files
+                    })
+                })
+            }
+        })
+    }
+
     onChange = e => {
         this.setState({
             content: e.target.value
@@ -24,7 +59,6 @@ export default class Drafts extends Component {
     }
     handleArticleClick = index => {
         // TODO 加载对应的文件 设置为content
-        console.log(index)
         this.setState({
             activeIndex: index
         })
@@ -36,11 +70,56 @@ export default class Drafts extends Component {
     }
     handleOk = () => {
         // TODO 调用主进程方法 hexo new post this.state.filename
-        console.log(this.state.filename)
+        use(
+            'createFile',
+            {
+                filename: this.state.filename,
+                dir: this.props.baseDir,
+                type: 'draft'
+            },
+            res => {
+                console.log(res)
+                if (res.code !== 0) {
+                    return message.warn(res.msg)
+                }
+                message.success('草稿创建成功')
+            }
+        )
     }
+
+    handleEditorOk() {
+        // TODO 讲内容写入对应的文件中
+    }
+
     handleSearch = keywords => {
-        console.log(keywords)
+        let data = this.files.filter(item => {
+            return item.filename.indexOf(keywords) !== -1
+        })
+        this.setState({
+            articles: data
+        })
     }
+
+    handleEdit = data => {
+        use(
+            'getFileDetail',
+            `${this.props.baseDir}/source/_drafts/${data.filename}.md`,
+            content => {
+                this.current = data
+                this.setState({
+                    dialogTitle: data.filename,
+                    editorVisible: true,
+                    content
+                })
+            }
+        )
+    }
+
+    handleDelete = data => {
+        this.current = data
+        this.showDeleteConfirm()
+    }
+
     render() {
         return (
             <div className={styles.container}>
@@ -65,6 +144,7 @@ export default class Drafts extends Component {
                             />
                         </Tooltip>
                     </div>
+                    <Button type="primary">部署</Button>
                 </div>
                 <ArticleList
                     type="drafts"
@@ -73,6 +153,8 @@ export default class Drafts extends Component {
                     onClick={this.handleArticleClick}
                     onAddClick={this.handleAddClick}
                     onSearch={this.handleSearch}
+                    onEdit={this.handleEdit}
+                    onDelete={this.handleDelete}
                 />
                 <Modal
                     title="新建文章"
@@ -94,7 +176,33 @@ export default class Drafts extends Component {
                         }}
                     />
                 </Modal>
+                <Modal
+                    width="80%"
+                    title={this.state.dialogTitle}
+                    okText="确定"
+                    cancelText="取消"
+                    visible={this.state.editorVisible}
+                    onOk={this.handleEditorOk}
+                    style={{ top: 30 }}
+                    onCancel={() => {
+                        this.setState({
+                            editorVisible: false
+                        })
+                    }}
+                >
+                    <div className={styles.editorBox}>
+                        <MarkdownEditor
+                            content={this.state.content}
+                            change={this.onChange}
+                        />
+                    </div>
+                </Modal>
             </div>
         )
     }
 }
+const mapStateToProps = state => ({
+    baseDir: state.system.baseDir
+})
+
+export default connect(mapStateToProps)(Drafts)
