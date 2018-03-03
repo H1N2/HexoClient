@@ -4,7 +4,7 @@ exports.reg = function(type, cb) {
     ipcMain.on(type, async (event, arg) => {
         if (!cb) return
         let res = cb(arg)
-        if (typeof res === 'promise') {
+        if (typeof res.then === 'function') {
             res = await res
         }
         event.sender.send(`${type}__success`, res)

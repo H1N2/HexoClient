@@ -27,12 +27,14 @@ reg('getFileDetail', filename => {
 // 获取指定文件夹下的文件列表
 reg('getFileList', dirname => {
     let files = fs.readdirSync(dirname)
-    return files.map(item => {
-        return {
-            filename: item.replace(/\.\S+$/, ''),
-            key: nanoid()
-        }
-    })
+    return files
+        .map(item => {
+            return {
+                filename: item.replace(/\.\S+$/, ''),
+                key: nanoid()
+            }
+        })
+        .filter(item => item.filename)
 })
 
 // 写文件
@@ -53,6 +55,10 @@ reg('setFileContent', ({ filename, content }) => {
 // 删除文件
 reg('deleteFile', filename => {
     fs.unlinkSync(filename)
+    return {
+        code: 0,
+        msg: '删除成功'
+    }
 })
 
 // 新建文件
@@ -64,15 +70,15 @@ reg('createFile', ({ filename, dir, type }) => {
             msg: '文件已存在'
         }
     }
-    // TODO child_process.exec(`hexo new ${type}`)  type: post/draft
-    return execCmd(`hexo new ${type}`, dir)
+    let command = `hexo new ${type} ${filename}`
+    let res = execCmd(command, dir)
+    return res
 })
 
 // 使用child_process来执行相关命令
 function execCmd(command, cwd) {
     return new Promise((resolve, reject) => {
         exec(command, { cwd }, (error, stdout, stderr) => {
-            console.log(error)
             if (error) {
                 resolve({
                     code: -1,

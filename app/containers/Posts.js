@@ -20,9 +20,14 @@ class Posts extends Component {
     }
 
     componentDidMount() {
+        this.getData()
+    }
+
+    getData() {
         let path = this.props.baseDir + '/source/_posts'
         use('getFileList', path, files => {
             this.files = files
+            console.log(files)
             this.setState({
                 articles: files
             })
@@ -69,8 +74,24 @@ class Posts extends Component {
         })
     }
     handleOk = () => {
-        // TODO 调用主进程方法 hexo new post this.state.filename
-        console.log(this.state.filename)
+        use(
+            'createFile',
+            {
+                filename: this.state.filename,
+                dir: this.props.baseDir,
+                type: 'post'
+            },
+            res => {
+                if (res.code !== 0) {
+                    return message.warn(res.msg)
+                }
+                message.success('创建成功')
+                this.setState({
+                    visible: false
+                })
+                this.getData()
+            }
+        )
     }
 
     handleEditorOk() {

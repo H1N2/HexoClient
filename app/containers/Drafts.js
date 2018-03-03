@@ -20,6 +20,10 @@ class Drafts extends Component {
     }
 
     componentDidMount() {
+        this.getData()
+    }
+
+    getData() {
         let path = this.props.baseDir + '/source/_drafts'
         use('getFileList', path, files => {
             this.files = files
@@ -69,7 +73,6 @@ class Drafts extends Component {
         })
     }
     handleOk = () => {
-        // TODO 调用主进程方法 hexo new post this.state.filename
         use(
             'createFile',
             {
@@ -78,11 +81,14 @@ class Drafts extends Component {
                 type: 'draft'
             },
             res => {
-                console.log(res)
                 if (res.code !== 0) {
                     return message.warn(res.msg)
                 }
-                message.success('草稿创建成功')
+                message.success('创建成功')
+                this.setState({
+                    visible: false
+                })
+                this.getData()
             }
         )
     }
