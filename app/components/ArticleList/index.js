@@ -23,8 +23,13 @@ export default class ArticleList extends Component {
                         >
                             编辑
                         </Button>
-                        {this.props.type === 'drafts' ? (
-                            <Button style={{ marginLeft: '10px' }}>发布</Button>
+                        {this.props.type === 'draft' ? (
+                            <Button
+                                style={{ marginLeft: '10px' }}
+                                onClick={() => this.props.onPublish(record)}
+                            >
+                                发布
+                            </Button>
                         ) : null}
                         <Button
                             type="dashed"
