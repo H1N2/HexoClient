@@ -12,7 +12,16 @@ export default class MarkdownEditor extends Component {
 
     togglePreview = () => {
         if (!this.state.previewing) {
-            let html = marked(this.props.content)
+            let contents = this.props.content.split('---')
+            let header = contents[1]
+            let content = ''
+            for (let i = 2, l = contents.length; i < l; i++) {
+                content += contents[i]
+            }
+            let title = /title: (\S+)/.exec(header)[1]
+            let html =
+                `<h1 style="text-align: center;">${title}</h1>` +
+                marked(content)
             this.setState({
                 html
             })
@@ -52,9 +61,6 @@ export default class MarkdownEditor extends Component {
                             />
                         </Tooltip>
                     )}
-                    <Tooltip title="保存">
-                        <Icon className={styles.icon} type="save" />
-                    </Tooltip>
                 </div>
                 {this.state.previewing ? (
                     <div

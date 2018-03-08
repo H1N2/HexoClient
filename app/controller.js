@@ -75,6 +75,20 @@ reg('createFile', ({ filename, dir, type }) => {
     return res
 })
 
+// 发布草稿
+reg('publishDraft', ({ title, dir }) => {
+    let command = `hexo publish ${title}`
+    let res = execCmd(command, dir)
+    return res
+})
+
+// 部署
+reg('deploy', dir => {
+    let command = `hexo g -d`
+    let res = execCmd(command, dir)
+    return res
+})
+
 // 使用child_process来执行相关命令
 function execCmd(command, cwd) {
     return new Promise((resolve, reject) => {
