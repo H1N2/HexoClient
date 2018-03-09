@@ -4,20 +4,13 @@
     "version": "0.0.1",
     "description": "A Hexo Client",
     "scripts": {
-        "build":
-            "concurrently \"npm run build-main\" \"npm run build-renderer\"",
-        "build-dll":
-            "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
-        "build-main":
-            "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
-        "build-renderer":
-            "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
-        "dev":
-            "cross-env START_HOT=1 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 npm run start-renderer-dev",
-        "electron-rebuild":
-            "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
-        "lint":
-            "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
+        "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
+        "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
+        "build-main": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
+        "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
+        "dev": "cross-env START_HOT=1 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 npm run start-renderer-dev",
+        "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
+        "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
         "lint-fix": "npm run lint -- --fix",
         "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
         "lint-styles-fix": "stylefmt -r app/*.css app/components/*.css",
@@ -27,10 +20,8 @@
         "package-win": "npm run build && build --win --x64",
         "prestart": "npm run build",
         "start": "cross-env NODE_ENV=production electron ./app/",
-        "start-main-dev":
-            "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev",
-        "start-renderer-dev":
-            "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js"
+        "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev",
+        "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js"
     },
     "browserslist": "electron 1.6",
     "build": {
@@ -59,10 +50,15 @@
             ]
         },
         "win": {
-            "target": ["nsis"]
+            "target": [
+                "nsis"
+            ]
         },
         "linux": {
-            "target": ["deb", "AppImage"],
+            "target": [
+                "deb",
+                "AppImage"
+            ],
             "category": "Development"
         },
         "directories": {
@@ -72,8 +68,7 @@
     },
     "repository": {
         "type": "git",
-        "url":
-            "git+https://github.com/chentsulin/electron-react-boilerplate.git"
+        "url": "git+https://github.com/chentsulin/electron-react-boilerplate.git"
     },
     "author": {
         "name": "C. T. Lin",
@@ -94,20 +89,25 @@
         "hot",
         "reload"
     ],
-    "homepage":
-        "https://github.com/chentsulin/electron-react-boilerplate#readme",
+    "homepage": "https://github.com/chentsulin/electron-react-boilerplate#readme",
     "jest": {
         "moduleNameMapper": {
-            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-                "<rootDir>/internals/mocks/fileMock.js",
+            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
             "\\.(css|less|sass|scss)$": "identity-obj-proxy"
         },
-        "moduleFileExtensions": ["js"],
-        "moduleDirectories": ["node_modules", "app/node_modules"],
+        "moduleFileExtensions": [
+            "js"
+        ],
+        "moduleDirectories": [
+            "node_modules",
+            "app/node_modules"
+        ],
         "transform": {
             "^.+\\.js$": "babel-jest"
         },
-        "setupFiles": ["./internals/scripts/CheckBuiltsExist.js"]
+        "setupFiles": [
+            "./internals/scripts/CheckBuiltsExist.js"
+        ]
     },
     "devDependencies": {
         "babel-core": "^6.26.0",
@@ -179,12 +179,14 @@
     },
     "dependencies": {
         "antd": "^3.1.4",
+        "crypto": "^1.0.1",
         "devtron": "^1.4.0",
         "electron-debug": "^1.5.0",
         "font-awesome": "^4.7.0",
         "history": "^4.7.2",
         "marked": "^0.3.12",
         "nanoid": "^1.0.1",
+        "qs": "^6.5.1",
         "react": "^16.2.0",
         "react-dom": "^16.2.0",
         "react-hot-loader": "^4.0.0-beta.13",
@@ -194,7 +196,9 @@
         "react-router-redux": "^5.0.0-alpha.6",
         "redux": "^3.7.2",
         "redux-thunk": "^2.2.0",
-        "source-map-support": "^0.5.0"
+        "request-promise": "^4.2.2",
+        "source-map-support": "^0.5.0",
+        "url": "^0.11.0"
     },
     "devEngines": {
         "node": ">=7.x",
