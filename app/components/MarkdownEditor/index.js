@@ -38,9 +38,6 @@ export default class MarkdownEditor extends Component {
                     <Tooltip title="插入图片">
                         <Icon className={styles.icon} type="picture" />
                     </Tooltip>
-                    <Tooltip title="插入七牛图片">
-                        <Icon className={styles.icon} type="cloud-upload-o" />
-                    </Tooltip>
                     <Tooltip title="插入链接">
                         <Icon className={styles.icon} type="link" />
                     </Tooltip>
