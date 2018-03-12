@@ -50,7 +50,7 @@ class BaseSetting extends Component {
     }
 
     handleSubmit = e => {
-        // TODO 进行相关的检测
+        // TODO 校验仓库是否为合法的hexo目录、校验七牛ak sk bucket的正确性
         e.preventDefault()
         this.props.setBaseSetting({
             baseDir: this.state.baseDir,
@@ -60,7 +60,7 @@ class BaseSetting extends Component {
         })
     }
     chooseFolder = () => {
-        use('setdir', path => {
+        use('setdir').then(path => {
             this.setState({
                 baseDir: path
             })

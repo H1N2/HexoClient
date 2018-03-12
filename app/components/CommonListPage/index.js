@@ -24,7 +24,7 @@ class CommonPage extends Component {
     }
 
     getData() {
-        use('getFileList', this.path, files => {
+        use('getFileList', this.path).then(files => {
             this.files = files
             this.setState({
                 articles: files
@@ -40,7 +40,7 @@ class CommonPage extends Component {
             cancelText: '取消',
             onOk: () => {
                 let filename = `${this.path}/${this.current.filename}.md`
-                use('deleteFile', filename, res => {
+                use('deleteFile', filename).then(res => {
                     message.success('删除成功')
                     this.files = this.files.filter(item => {
                         return item.filename !== this.current.filename
@@ -70,40 +70,32 @@ class CommonPage extends Component {
         })
     }
     handleOk = () => {
-        use(
-            'createFile',
-            {
-                filename: this.state.filename,
-                dir: this.props.baseDir,
-                type: this.props.type
-            },
-            res => {
-                if (res.code !== 0) {
-                    return message.warn(res.msg)
-                }
-                message.success('创建成功')
-                this.setState({
-                    visible: false
-                })
-                this.getData()
+        use('createFile', {
+            filename: this.state.filename,
+            dir: this.props.baseDir,
+            type: this.props.type
+        }).then(res => {
+            if (res.code !== 0) {
+                return message.warn(res.msg)
             }
-        )
+            message.success('创建成功')
+            this.setState({
+                visible: false
+            })
+            this.getData()
+        })
     }
 
     handleEditorOk = () => {
-        use(
-            'setFileContent',
-            {
-                filename: `${this.path}/${this.current.filename}.md`,
-                content: this.state.content
-            },
-            msg => {
-                this.setState({
-                    editorVisible: false
-                })
-                message.success('编辑成功')
-            }
-        )
+        use('setFileContent', {
+            filename: `${this.path}/${this.current.filename}.md`,
+            content: this.state.content
+        }).then(msg => {
+            this.setState({
+                editorVisible: false
+            })
+            message.success('编辑成功')
+        })
     }
 
     handleSearch = keywords => {
@@ -116,14 +108,16 @@ class CommonPage extends Component {
     }
 
     handleEdit = data => {
-        use('getFileDetail', `${this.path}/${data.filename}.md`, content => {
-            this.current = data
-            this.setState({
-                dialogTitle: data.filename,
-                editorVisible: true,
-                content
-            })
-        })
+        use('getFileDetail', `${this.path}/${data.filename}.md`).then(
+            content => {
+                this.current = data
+                this.setState({
+                    dialogTitle: data.filename,
+                    editorVisible: true,
+                    content
+                })
+            }
+        )
     }
 
     handleDelete = data => {
@@ -132,19 +126,18 @@ class CommonPage extends Component {
     }
 
     handlePublish = data => {
-        use(
-            'publishDraft',
-            { title: data.filename, dir: this.props.baseDir },
-            msg => {
-                this.getData()
-                message.success('发布成功')
-            }
-        )
+        use('publishDraft', {
+            title: data.filename,
+            dir: this.props.baseDir
+        }).then(msg => {
+            this.getData()
+            message.success('发布成功')
+        })
     }
 
     handleDeploy = () => {
         let hide = message.loading('正在部署，请稍候...', 0)
-        use('deploy', this.props.baseDir, msg => {
+        use('deploy', this.props.baseDir).then(msg => {
             hide()
             message.success('部署成功')
         })
