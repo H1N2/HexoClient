@@ -227,8 +227,14 @@ class CommonPage extends Component {
                 >
                     <div className={styles.editorBox}>
                         <MarkdownEditor
+                            ak={this.props.ak}
+                            sk={this.props.sk}
+                            bucket={this.props.bucket}
                             content={this.state.content}
                             change={this.onChange}
+                            setContent={content => {
+                                this.setState({ content })
+                            }}
                         />
                     </div>
                 </Modal>

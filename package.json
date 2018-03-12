@@ -1,8 +1,8 @@
 {
-    "name": "electron-react-boilerplate",
-    "productName": "ElectronReact",
-    "version": "0.13.1",
-    "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+    "name": "hexo-client",
+    "productName": "HexoClient",
+    "version": "0.0.1",
+    "description": "A Hexo Client",
     "scripts": {
         "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
         "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
@@ -179,12 +179,14 @@
     },
     "dependencies": {
         "antd": "^3.1.4",
+        "crypto": "^1.0.1",
         "devtron": "^1.4.0",
         "electron-debug": "^1.5.0",
         "font-awesome": "^4.7.0",
         "history": "^4.7.2",
         "marked": "^0.3.12",
         "nanoid": "^1.0.1",
+        "qs": "^6.5.1",
         "react": "^16.2.0",
         "react-dom": "^16.2.0",
         "react-hot-loader": "^4.0.0-beta.13",
@@ -194,7 +196,9 @@
         "react-router-redux": "^5.0.0-alpha.6",
         "redux": "^3.7.2",
         "redux-thunk": "^2.2.0",
-        "source-map-support": "^0.5.0"
+        "request-promise": "^4.2.2",
+        "source-map-support": "^0.5.0",
+        "url": "^0.11.0"
     },
     "devEngines": {
         "node": ">=7.x",
