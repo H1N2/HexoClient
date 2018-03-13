@@ -1,5 +1,13 @@
 import React, { Component } from 'react'
+import {
+    HashRouter as Router,
+    Switch,
+    Route,
+    NavLink,
+    Redirect
+} from 'react-router-dom'
 import { Layout, Menu, Icon } from 'antd'
+import { connect } from 'react-redux'
 import styles from '../assets/css/homePage.css'
 
 const { Header, Sider, Content } = Layout
@@ -9,10 +17,9 @@ import Posts from './Posts'
 import Drafts from './Drafts'
 import BaseSetting from './BaseSetting'
 
-export default class HomePage extends Component {
+class HomePage extends Component {
     state = {
-        collapsed: false,
-        key: 'posts'
+        collapsed: false
     }
 
     toggle = () => {
@@ -20,22 +27,14 @@ export default class HomePage extends Component {
             collapsed: !this.state.collapsed
         })
     }
-    changeMenu = ({ key }) => {
-        this.setState({
-            key: key
-        })
-    }
 
-    renderContent() {
-        switch (this.state.key) {
-            case 'posts':
-                return <Posts />
-            case 'drafts':
-                return <Drafts />
-            case 'base':
-                return <BaseSetting />
-            default:
-                return <Posts />
+    getDefaultOpenKeys = () => {
+        switch (this.props.location.pathname) {
+            case '/posts':
+            case '/drafts':
+                return ['article']
+            case '/base':
+                return ['setting']
         }
     }
 
@@ -57,9 +56,10 @@ export default class HomePage extends Component {
                     <Menu
                         theme="dark"
                         mode="inline"
-                        defaultOpenKeys={['article']}
-                        defaultSelectedKeys={[this.state.key]}
-                        onClick={this.changeMenu}
+                        defaultOpenKeys={this.getDefaultOpenKeys()}
+                        defaultSelectedKeys={[
+                            this.props.location.pathname.substr(1)
+                        ]}
                     >
                         <SubMenu
                             key="article"
@@ -71,12 +71,16 @@ export default class HomePage extends Component {
                             }
                         >
                             <Menu.Item key="posts">
-                                <Icon type="file-text" />
-                                <span>已发布</span>
+                                <NavLink to="/posts">
+                                    <Icon type="file-text" />
+                                    <span>已发布</span>
+                                </NavLink>
                             </Menu.Item>
                             <Menu.Item key="drafts">
-                                <Icon type="file" />
-                                <span>草稿</span>
+                                <NavLink to="/drafts">
+                                    <Icon type="file" />
+                                    <span>草稿</span>
+                                </NavLink>
                             </Menu.Item>
                         </SubMenu>
                         <SubMenu
@@ -89,8 +93,10 @@ export default class HomePage extends Component {
                             }
                         >
                             <Menu.Item key="base">
-                                <Icon type="profile" />
-                                <span>基础设置</span>
+                                <NavLink to="/base">
+                                    <Icon type="profile" />
+                                    <span>基础设置</span>
+                                </NavLink>
                             </Menu.Item>
                         </SubMenu>
                     </Menu>
@@ -115,10 +121,27 @@ export default class HomePage extends Component {
                             minHeight: 280
                         }}
                     >
-                        {this.renderContent()}
+                        <Router>
+                            <Switch>
+                                <Route path="/posts" component={Posts} />
+                                <Route path="/drafts" component={Drafts} />
+                                <Route path="/base" component={BaseSetting} />
+                                <Route
+                                    render={() => <Redirect to="/posts" />}
+                                />
+                            </Switch>
+                        </Router>
                     </Content>
                 </Layout>
             </Layout>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        location: state.router.location
+    }
+}
+
+export default connect(mapStateToProps)(HomePage)
