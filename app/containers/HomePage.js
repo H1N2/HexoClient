@@ -19,7 +19,12 @@ import BaseSetting from './BaseSetting'
 
 class HomePage extends Component {
     state = {
-        collapsed: false
+        collapsed: false,
+        openKeys: ['article']
+    }
+
+    componentDidMount() {
+        this.getDefaultOpenKeys()
     }
 
     toggle = () => {
@@ -29,13 +34,19 @@ class HomePage extends Component {
     }
 
     getDefaultOpenKeys = () => {
+        let openKeys
         switch (this.props.location.pathname) {
             case '/posts':
             case '/drafts':
-                return ['article']
+                openKeys = ['article']
+                break
             case '/base':
-                return ['setting']
+                openKeys = ['setting']
+                break
+            default:
+                openKeys = ['article']
         }
+        this.setState({ openKeys })
     }
 
     render() {
@@ -56,10 +67,9 @@ class HomePage extends Component {
                     <Menu
                         theme="dark"
                         mode="inline"
-                        defaultOpenKeys={this.getDefaultOpenKeys()}
-                        defaultSelectedKeys={[
-                            this.props.location.pathname.substr(1)
-                        ]}
+                        openKeys={this.state.openKeys}
+                        selectedKeys={[this.props.location.pathname.substr(1)]}
+                        onOpenChange={openKeys => this.setState({ openKeys })}
                     >
                         <SubMenu
                             key="article"

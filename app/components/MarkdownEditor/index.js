@@ -5,6 +5,7 @@ import './github-markdown.global.css'
 import { Icon, Tooltip } from 'antd'
 import Qiniu from '../../utils/qiniu'
 import Policy from '../../utils/policy'
+import { shell } from 'electron'
 
 export default class MarkdownEditor extends Component {
     state = {
@@ -39,9 +40,11 @@ export default class MarkdownEditor extends Component {
             for (let i = 2, l = contents.length; i < l; i++) {
                 content += contents[i]
             }
-            let title = /title: (\S+)/.exec(header)[1]
+            const title = /title: (\S+)/.exec(header)[1]
+            const time = /date: (\S+)/.exec(header)[1]
             let html =
-                `<h1 style="text-align: center;">${title}</h1>` +
+                `<p style="text-align: center;font-size: 26px;">${title}</p>` +
+                `<p style="text-align: center;">${time}</p>` +
                 marked(content)
             this.setState({
                 html
@@ -63,7 +66,7 @@ export default class MarkdownEditor extends Component {
         this.top = this.textarea.scrollTop
         setTimeout(() => {
             this.insertText(this.textarea, '[https://hexo.io](https://hexo.io)')
-        }, 300)
+        }, 50)
     }
 
     handleFileChange = e => {
@@ -156,6 +159,28 @@ export default class MarkdownEditor extends Component {
         return { startPos, endPos }
     }
 
+    // 点击外链在外部浏览器跳转
+    handlePreviewContentClick = e => {
+        e.preventDefault()
+        if (e.target.tagName.toLowerCase() === 'a') {
+            const href = e.target.href
+            if (!href) return
+            shell.openExternal(href)
+        }
+    }
+
+    // 处理tab四个空格
+    handleEditorKeyUp = e => {
+        if (e.which === 9) {
+            e.preventDefault()
+            this.pos = this.getPosition(this.textarea)
+            this.top = this.textarea.scrollTop
+            setTimeout(() => {
+                this.insertText(this.textarea, '    ')
+            }, 50)
+        }
+    }
+
     render() {
         return (
             <div className={styles.container}>
@@ -203,11 +228,13 @@ export default class MarkdownEditor extends Component {
                 </div>
                 {this.state.previewing ? (
                     <div
+                        onClick={this.handlePreviewContentClick}
                         dangerouslySetInnerHTML={{ __html: this.state.html }}
                         className={styles.editorPreview + ' markdown-body'}
                     />
                 ) : (
                     <textarea
+                        onKeyDown={this.handleEditorKeyUp}
                         value={this.props.content}
                         className={styles.editor}
                         onChange={this.props.change}

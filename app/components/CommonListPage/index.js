@@ -15,7 +15,8 @@ class CommonPage extends Component {
         editorVisible: false,
         filename: '',
         dialogTitle: '',
-        articles: []
+        articles: [],
+        editorStyle: {}
     }
 
     componentDidMount() {
@@ -185,7 +186,7 @@ class CommonPage extends Component {
                     onPublish={this.handlePublish}
                 />
                 <Modal
-                    title="新建文章"
+                    title={this.props.type === 'post' ? '新建文章' : '新建草稿'}
                     okText="确定"
                     cancelText="取消"
                     visible={this.state.visible}
@@ -205,20 +206,20 @@ class CommonPage extends Component {
                     />
                 </Modal>
                 <Modal
-                    width="80%"
+                    width="100%"
                     title={this.state.dialogTitle}
                     okText="确定"
                     cancelText="取消"
                     visible={this.state.editorVisible}
                     onOk={this.handleEditorOk}
-                    style={{ top: 30 }}
+                    style={{ top: 0, bottom: 0, height: '100%' }}
                     onCancel={() => {
                         this.setState({
                             editorVisible: false
                         })
                     }}
                 >
-                    <div className={styles.editorBox}>
+                    <div className={styles.editorBox} style={this.editorStyle}>
                         <MarkdownEditor
                             ak={this.props.ak}
                             sk={this.props.sk}

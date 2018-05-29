@@ -21,5 +21,5 @@
     display: flex;
 }
 .editorBox {
-    height: 480px;
+    height: calc(100vh - 156px);
 }
